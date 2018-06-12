@@ -1,30 +1,6 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.5)
 
 project(cpp2d)
-
-find_path(LLVM_INCLUDE llvm
-   PATH_SUFFIXES llvm
-   DOC "Include directory for llvm"
-   )
-include_directories(${LLVM_INCLUDE})
-
-find_path(LLVM_LIB llvm
-   PATH_SUFFIXES llvm
-   DOC "Lib directory for llvm"
-)
-link_directories(${LLVM_LIB})
-
-find_path(CLANG_INCLUDE clang
-   PATH_SUFFIXES clang
-   DOC "Include directory for clang"
-)
-include_directories(${CLANG_INCLUDE})
-
-find_path(CLANG_LIB clang
-   PATH_SUFFIXES clang
-   DOC "Lib directory for clang"
-)
-link_directories(${CLANG_LIB})
 
 # Déclaration de l'exécutable
 add_executable(
@@ -43,46 +19,33 @@ add_executable(
     CustomPrinters/cpp_stdlib_port.cpp
 )
 
-target_link_libraries(cpp2d
-  clangFrontend
-  clangSerialization
-  clangDriver
-  clangParse
-  clangSema
-  clangAnalysis
-  clangAST
-  clangBasic
-  clangEdit
-  clangLex
-  clangTooling
-  clangASTMatchers
-)
+include_directories(${LLVM_INCLUDE_DIRS})
+add_definitions(${LLVM_DEFINITIONS})
 
-target_link_libraries(cpp2d
-  LLVMX86AsmParser # MC, MCParser, Support, X86Desc, X86Info
-  LLVMX86Desc # MC, Support, X86AsmPrinter, X86Info
-  LLVMX86AsmPrinter # MC, Support, X86Utils
-  LLVMX86Info # MC, Support, Target
-  LLVMX86Utils # Core, Support
-  LLVMipo
-  LLVMScalarOpts
-  LLVMInstCombine
-  LLVMTransformUtils
-  LLVMAnalysis
-  LLVMTarget
-  LLVMOption # Support
-  LLVMMCParser # MC, Support
-  LLVMMC # Object, Support
-  LLVMObject # BitReader, Core, Support
-  LLVMBitReader # Core, Support
-  LLVMCore # Support
-  LLVMProfileData
-  LLVMSupport
-  LLVMDemangle
+llvm_map_components_to_libnames(llvm_libs
+  X86AsmParser # MC, MCParser, Support, X86Desc, X86Info
+  X86Desc # MC, Support, X86AsmPrinter, X86Info
+  X86AsmPrinter # MC, Support, X86Utils
+  X86Info # MC, Support, Target
+  X86Utils # Core, Support
+  ipo
+  ScalarOpts
+  InstCombine
+  TransformUtils
+  Analysis
+  Target
+  Option # Support
+  MCParser # MC, Support
+  MC # Object, Support
+  Object # BitReader, Core, Support
+  BitReader # Core, Support
+  Core # Support
+  ProfileData
+  Support
 )
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-rtti")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
     target_link_libraries(cpp2d rt dl tinfo pthread z m)
 endif()
 
@@ -91,4 +54,3 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 		version.lib
 	)
 endif()
-
