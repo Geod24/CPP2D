@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 2.6)
 
 project(CPP2D_UT_CPP)
 
+SET(CMAKE_CXX_STANDARD 14)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+SET(CMAKE_CXX_EXTENSIONS OFF)
+
 if(CMAKE_EXPORT_COMPILE_COMMANDS STREQUAL "ON")
     include_directories(${LLVM_LIB}/clang/4.0.1/include)
 endif()
